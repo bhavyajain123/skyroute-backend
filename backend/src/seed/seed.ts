@@ -514,7 +514,7 @@ function calculateDistanceKm(
 
 const generatedFlights: any[] = [];
 
-for (let day = 0; day < 14; day++) {
+for (let day = 0; day < 30; day++) {
   const travelDate = new Date(`${indiaToday}T00:00:00Z`);
   travelDate.setUTCDate(travelDate.getUTCDate() + day);
 

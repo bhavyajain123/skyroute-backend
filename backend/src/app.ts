@@ -26,7 +26,7 @@ import reviewRoutes from "./reviews/review.routes.js";
 import authRoutes from "./auth/auth.routes.js";
 
 import aiRoutes from "./ai/ai.routes.js";
-
+import checkInRoutes from "./checkin/checkin.routes.js";
 import { env } from "./config/env.js";
 
 const app = express();
@@ -37,10 +37,25 @@ app.disable("x-powered-by");
 app.use(helmet());
 
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "https://skyroute-frontend-zeta.vercel.app",
+  env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: env.CLIENT_URL,
-    credentials: true
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked for origin: ${origin}`));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -66,8 +81,10 @@ app.use("/api/admin/payments", adminPaymentsRoutes);
 app.use("/api/admin/flights", adminFlightsRoutes);
 app.use("/api/admin/airlines", adminAirlinesRoutes);
 app.use("/api/admin/reviews", adminReviewsRoutes);
+
 app.use("/api/flights", flightRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/checkin", checkInRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/tickets/verify", ticketVerificationRoutes);
@@ -78,8 +95,6 @@ app.use("/api/airports", airportRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/auth", authRoutes);
-
-
 app.use("/api/ai", aiRoutes);
 
 
