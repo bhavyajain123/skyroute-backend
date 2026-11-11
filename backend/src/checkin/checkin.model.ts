@@ -10,43 +10,24 @@ export interface ICheckIn extends Document {
   flight: Types.ObjectId;
   passenger: Types.ObjectId;
   userId: Types.ObjectId;
-
   seatNumber: string;
   boardingPassNumber: string;
   verificationTokenHash: string;
-
   checkedInAt: Date;
   status: "checked_in" | "cancelled";
-
   createdAt: Date;
   updatedAt: Date;
 }
 
 const checkInSchema = new Schema<ICheckIn>(
   {
-    booking: {
-      type: Schema.Types.ObjectId,
-      ref: "Booking",
-      required: true,
-    },
+    booking: { type: Schema.Types.ObjectId, ref: "Booking",required: true,  },
 
-    flight: {
-      type: Schema.Types.ObjectId,
-      ref: "Flight",
-      required: true,
-    },
-
-    passenger: {
-      type: Schema.Types.ObjectId,
-      ref: "Passenger",
-      required: true,
-    },
-
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    flight: { type: Schema.Types.ObjectId,ref: "Flight",required: true,},
+     
+    passenger: { type: Schema.Types.ObjectId, ref: "Passenger", required: true,},
+     
+    userId: { type: Schema.Types.ObjectId,ref: "User",required: true, },
 
     seatNumber: {
       type: String,
@@ -87,18 +68,17 @@ verificationTokenHash: {
   }
 );
 
-
 checkInSchema.index(
   { booking: 1, passenger: 1 },
-  {
-    unique: true,
+  { unique: true,
+   
     partialFilterExpression: {
       status: "checked_in",
     },
   }
 );
 
-checkInSchema.index({ userId: 1, createdAt: -1 });
+checkInSchema.index({userId: 1,createdAt: -1 });
 checkInSchema.index({ flight: 1, seatNumber: 1 });
 
 export const CheckIn = mongoose.model<ICheckIn>(

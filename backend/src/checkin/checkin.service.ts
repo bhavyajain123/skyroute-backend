@@ -1,7 +1,6 @@
 
 import { createHash, randomBytes } from "node:crypto";
 import mongoose, { Types } from "mongoose";
-
 import { Booking } from "../bookings/booking.model.js";
 import { Flight } from "../flights/flight.model.js";
 import { Passenger } from "../passengers/passenger.model.js";
@@ -18,7 +17,6 @@ const CHECK_IN_CLOSES_HOURS = Number(
 function generateBoardingPassNumber(): string {
   return `SKY-${randomBytes(5).toString("hex").toUpperCase()}`;
 }
-
 function hashVerificationToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -43,13 +41,11 @@ export async function getCheckInEligibility(
   if (booking.status !== "confirmed") {
     throw new Error("BOOKING_NOT_CONFIRMED");
   }
-
   if (booking.paymentStatus !== "paid") {
     throw new Error("PAYMENT_NOT_COMPLETED");
   }
 
   const flight = await Flight.findById(booking.flight);
-
   if (!flight) {
     throw new Error("FLIGHT_NOT_FOUND");
   }

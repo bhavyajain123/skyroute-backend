@@ -1,36 +1,32 @@
 
-import type { Request, Response } from "express";
-import { Types } from "mongoose";
+import type {Request,Response }from "express";
+import {Types} from "mongoose";
 
-import {
-  getCheckInEligibility,
-  createCheckIn,
-} from "./checkin.service.js";
+import {getCheckInEligibility, createCheckIn,} from "./checkin.service.js";
+  
 
 interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-  };
-}
+  user?: { id: string; };
+   }
+ 
+
 
 function getParam(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] ?? "" : value ?? "";
 }
 
-function getUserId(req: AuthenticatedRequest): Types.ObjectId {
-  const userId = req.user?.id;
+function getUserId(req:AuthenticatedRequest): Types.ObjectId {
+  const userId =req.user?.id;
 
-  if (!userId || !Types.ObjectId.isValid(userId)) {
+  if (!userId ||!Types.ObjectId.isValid(userId)) {
     throw new Error("AUTH_REQUIRED");
   }
-
   return new Types.ObjectId(userId);
 }
 
-function handleError(error: unknown, res: Response) {
-  const message =
-    error instanceof Error ? error.message : "INTERNAL_SERVER_ERROR";
-
+function handleError(error:unknown,res: Response) {
+  const message =error instanceof Error ? error.message : "INTERNAL_SERVER_ERROR";
+    
   const statusMap: Record<string, number> = {
     AUTH_REQUIRED: 401,
     INVALID_BOOKING_ID: 400,
@@ -48,23 +44,17 @@ function handleError(error: unknown, res: Response) {
     PASSENGER_SEAT_NOT_ASSIGNED: 400,
     ALREADY_CHECKED_IN: 409,
   };
-
-  return res.status(statusMap[message] ?? 500).json({
-    success: false,
-    message,
-  });
+  return res.status(statusMap[message] ?? 500).json({ success: false, message, });
+   
 }
 
-
-export async function checkInEligibility(
-  req: AuthenticatedRequest,
-  res: Response
-) {
+export async function checkInEligibility( req: AuthenticatedRequest,res: Response) 
+ 
+{
   try {
-    const bookingId = getParam(req.params.bookingId);
-    const userId = getUserId(req);
-
-    const result = await getCheckInEligibility(bookingId, userId);
+    const bookingId =getParam(req.params.bookingId);
+    const userId =getUserId(req);
+    const result =await getCheckInEligibility(bookingId,userId);
 
     return res.status(200).json({
       success: true,
@@ -87,10 +77,9 @@ export async function checkInEligibility(
 }
 
 
-export async function checkInPassenger(
-  req: AuthenticatedRequest,
-  res: Response
-) {
+export async function checkInPassenger( req: AuthenticatedRequest,res: Response) 
+ 
+{
   try {
     const bookingId = getParam(req.params.bookingId);
     const passengerId = req.body.passengerId;
@@ -100,18 +89,13 @@ export async function checkInPassenger(
       typeof passengerId !== "string" ||
       !Types.ObjectId.isValid(passengerId)
     ) {
-      return res.status(400).json({
-        success: false,
-        message: "INVALID_PASSENGER_ID",
-      });
+      return res.status(400).json({success: false, message: "INVALID_PASSENGER_ID",   });
+        
     }
 
-    const result = await createCheckIn(
-      bookingId,
-      passengerId,
-      userId
-    );
-
+    const result = await createCheckIn( bookingId,passengerId,userId    );
+     
+      
     return res.status(201).json({
       success: true,
       message: "Check-in completed successfully",

@@ -1,15 +1,12 @@
 
 import { Router } from "express";
 
-import {
-  checkInEligibility,
-  checkInPassenger,
-} from "./checkin.controller.js";
+import {checkInEligibility,checkInPassenger,} from "./checkin.controller.js";
+  
 
 import { authenticate } from "../auth/auth.middleware.js";
 
 const router = Router();
-
 
 router.get(
   "/:bookingId/eligibility",
