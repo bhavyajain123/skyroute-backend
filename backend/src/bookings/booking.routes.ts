@@ -1,0 +1,12 @@
+import {Router} from "express";
+import { createBookingController } from "./booking.controller.js";
+import { getBookingByReferenceController } from "./booking-details.controller.js";
+import { cancelBookingController } from "./booking-cancel.controller.js";
+import { getMyBookingsController } from "./my-bookings.controller.js";
+import { authenticate } from "../auth/auth.middleware.js";
+const router= Router();
+router.post("/", authenticate, createBookingController);
+router.get("/my-bookings", authenticate, getMyBookingsController);
+router.get("/:bookingReference", authenticate, getBookingByReferenceController);
+router.patch("/:bookingReference/cancel", authenticate, cancelBookingController);
+export default router;
